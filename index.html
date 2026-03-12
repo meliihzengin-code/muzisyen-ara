@@ -624,10 +624,16 @@ function uygulamayiYukle() {
 
 async function firebaseKartlarCek() {
   try {
+    // Önce bu kullanıcının daha önce beğendiklerini al
+    const begeniSnap = await getDocs(query(collection(db, 'begeniler'), where('gonderen', '==', guncelUser.uid)));
+    const begenilenIdler = new Set();
+    begeniSnap.forEach(d => begenilenIdler.add(d.data().alan));
+
     const snap = await getDocs(collection(db, 'kullanicilar'));
     const fbKartlar = [];
     snap.forEach(d => {
-      if (d.id !== guncelUser.uid) {
+      // Kendi profilini ve daha önce beğendiklerini gösterme
+      if (d.id !== guncelUser.uid && !begenilenIdler.has(d.id)) {
         const v = d.data();
         fbKartlar.push({
           id:d.id, isim:v.isim||'Müzisyen',
@@ -695,7 +701,13 @@ function eslesmelerDinle() {
 window.filterSec = (chip, filtre) => {
   document.querySelectorAll('.chip').forEach(c => c.classList.remove('aktif'));
   chip.classList.add('aktif');
-  kartlar = filtre ? tumKartlar.filter(k => k.enstrumanlar.some(e => e.includes(filtre))) : [...tumKartlar];
+  if (!filtre) {
+    kartlar = [...tumKartlar];
+  } else {
+    kartlar = tumKartlar.filter(k =>
+      k.enstrumanlar.some(e => e.toLowerCase().includes(filtre.toLowerCase()))
+    );
+  }
   aktifKartIndex = 0; gecmis = [];
   kartlarOlustur();
 };

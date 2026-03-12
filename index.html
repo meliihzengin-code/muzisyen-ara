@@ -207,6 +207,23 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:var(--font-bo
 /* KAYIT FORMU */
 .kayit-ekstra { display:none; flex-direction:column; gap:10px; }
 .kayit-ekstra.goster { display:flex; }
+
+/* PROFİL DÜZENLEME MODAL */
+.modal-arka { position:fixed; inset:0; background:rgba(0,0,0,0.6); backdrop-filter:blur(8px); z-index:800; opacity:0; pointer-events:none; transition:opacity 0.3s; }
+.modal-arka.goster { opacity:1; pointer-events:all; }
+.modal { position:fixed; bottom:0; left:50%; transform:translateX(-50%) translateY(100%); width:100%; max-width:430px; background:var(--surface); border-radius:28px 28px 0 0; z-index:801; padding:24px 20px 40px; transition:transform 0.4s cubic-bezier(0.34,1.2,0.64,1); max-height:90dvh; overflow-y:auto; }
+.modal.goster { transform:translateX(-50%) translateY(0); }
+.modal-tutac { width:40px; height:4px; background:var(--border2); border-radius:2px; margin:0 auto 20px; }
+.modal-baslik { font-family:var(--font-display); font-size:20px; font-weight:700; margin-bottom:20px; }
+.modal-label { font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; margin-top:14px; }
+.modal-input { width:100%; padding:13px 15px; background:var(--surface2); border:1.5px solid var(--border); border-radius:14px; color:var(--text); font-family:var(--font-body); font-size:15px; outline:none; transition:border-color 0.2s; }
+.modal-input:focus { border-color:var(--accent); }
+.modal-input::placeholder { color:var(--muted); }
+.modal-textarea { resize:none; height:90px; line-height:1.5; }
+.modal-kaydet { width:100%; padding:15px; background:linear-gradient(135deg,var(--accent),#ff9a3a); color:white; border:none; border-radius:var(--radius-btn); font-family:var(--font-display); font-size:16px; font-weight:700; cursor:pointer; margin-top:20px; transition:transform 0.2s, opacity 0.2s; }
+.modal-kaydet:active { transform:scale(0.97); }
+.modal-kaydet:disabled { opacity:0.6; }
+.modal-enstruman-secim { display:flex; gap:8px; flex-wrap:wrap; margin-top:4px; }
 .enstruman-secim { display:flex; gap:8px; flex-wrap:wrap; }
 .enstruman-chip { padding:8px 14px; background:var(--surface); border:1.5px solid var(--border2); border-radius:12px; font-size:13px; cursor:pointer; transition:all 0.2s; }
 .enstruman-chip.secili { background:var(--accent); border-color:var(--accent); color:white; }
@@ -333,6 +350,33 @@ html, body { width:100%; height:100%; overflow:hidden; font-family:var(--font-bo
       <span>Profil</span>
     </button>
   </nav>
+</div>
+
+<!-- PROFİL MODAL -->
+<div class="modal-arka" id="profil-modal-arka" onclick="profilModalKapat()"></div>
+<div class="modal" id="profil-modal">
+  <div class="modal-tutac"></div>
+  <div class="modal-baslik">Profili Düzenle ✏️</div>
+  <div class="modal-label">Ad0131n Soyad0131n</div>
+  <input class="modal-input" id="modal-isim" type="text" placeholder="Ad0131n Soyad0131n">
+  <div class="modal-label">015eehir</div>
+  <input class="modal-input" id="modal-sehir" type="text" placeholder="0130stanbul, Ankara...">
+  <div class="modal-label">Hakk0131mda</div>
+  <textarea class="modal-input modal-textarea" id="modal-bio" placeholder="Kendinden bahset..."></textarea>
+  <div class="modal-label">Enstr00fcmanlar</div>
+  <div class="modal-enstruman-secim" id="modal-enstruman-secim">
+    <div class="enstruman-chip" onclick="this.classList.toggle('secili')">🎸 Gitar</div>
+    <div class="enstruman-chip" onclick="this.classList.toggle('secili')">🥁 Davul</div>
+    <div class="enstruman-chip" onclick="this.classList.toggle('secili')">🎹 Piyano</div>
+    <div class="enstruman-chip" onclick="this.classList.toggle('secili')">🎤 Vokal</div>
+    <div class="enstruman-chip" onclick="this.classList.toggle('secili')">🎷 Saksafon</div>
+    <div class="enstruman-chip" onclick="this.classList.toggle('secili')">🎻 Keman</div>
+    <div class="enstruman-chip" onclick="this.classList.toggle('secili')">🎸 Bas Gitar</div>
+  </div>
+  <div class="modal-label">M00fczik T00fcrleri</div>
+  <input class="modal-input" id="modal-turler" type="text" placeholder="Rock, Jazz, Folk... (virg00fclle ay0131r)">
+  <div id="modal-hata" style="font-size:13px;color:#ff4444;margin-top:8px;min-height:18px;"></div>
+  <button class="modal-kaydet" id="modal-kaydet-btn" onclick="profilKaydet()">Kaydet 2728</button>
 </div>
 
 <!-- EŞLEŞTİ -->
@@ -750,7 +794,7 @@ function profilYukle() {
     </div>
     ${enstrumanlar.length ? `<div class="bolum-baslik">Enstrümanlar</div><div class="enstruman-row">${enstrumanlar.map(e=>`<span class="enstruman-tag">${e}</span>`).join('')}</div>` : ''}
     <div class="bolum-baslik" style="margin-top:24px">Ayarlar</div>
-    <div class="ayar-satir">
+    <div class="ayar-satir" onclick="profilModalAc()">
       <div class="ayar-ikon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
       <div class="ayar-label">Profili Düzenle</div>
       <div class="ayar-ok"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
@@ -762,6 +806,50 @@ function profilYukle() {
 }
 
 window.cikisYap = async () => { await signOut(auth); };
+
+/* ═══════════════════════════════
+   PROFİL DÜZENLEME
+═══════════════════════════════ */
+window.profilModalAc = () => {
+  const p = guncelProfil || {};
+  document.getElementById("modal-isim").value = p.isim || "";
+  document.getElementById("modal-sehir").value = p.sehir || "";
+  document.getElementById("modal-bio").value = p.bio || "";
+  document.getElementById("modal-turler").value = (p.turler||[]).join(", ");
+  // Enstrümanları işaretle
+  document.querySelectorAll("#modal-enstruman-secim .enstruman-chip").forEach(chip => {
+    chip.classList.toggle("secili", (p.enstrumanlar||[]).includes(chip.textContent));
+  });
+  document.getElementById("modal-hata").textContent = "";
+  document.getElementById("profil-modal-arka").classList.add("goster");
+  document.getElementById("profil-modal").classList.add("goster");
+};
+window.profilModalKapat = () => {
+  document.getElementById("profil-modal-arka").classList.remove("goster");
+  document.getElementById("profil-modal").classList.remove("goster");
+};
+window.profilKaydet = async () => {
+  const btn = document.getElementById("modal-kaydet-btn");
+  const hata = document.getElementById("modal-hata");
+  const isim = document.getElementById("modal-isim").value.trim();
+  const sehir = document.getElementById("modal-sehir").value.trim();
+  const bio = document.getElementById("modal-bio").value.trim();
+  const turler = document.getElementById("modal-turler").value.split(",").map(t=>t.trim()).filter(Boolean);
+  const enstrumanlar = [...document.querySelectorAll("#modal-enstruman-secim .enstruman-chip.secili")].map(e=>e.textContent);
+  if (!isim) { hata.textContent = "İsim zorunlu!"; return; }
+  btn.textContent = "Kaydediliyor...";
+  btn.disabled = true;
+  try {
+    await setDoc(doc(db,"kullanicilar",guncelUser.uid), { isim,sehir,bio,turler,enstrumanlar }, {merge:true});
+    guncelProfil = {...(guncelProfil||{}), isim,sehir,bio,turler,enstrumanlar};
+    profilModalKapat();
+    profilYukle();
+  } catch(e) {
+    hata.textContent = "Kaydetme hatası: " + e.message;
+  }
+  btn.textContent = "Kaydet ✨";
+  btn.disabled = false;
+};
 
 /* ═══════════════════════════════
    YARDIMCILAR
